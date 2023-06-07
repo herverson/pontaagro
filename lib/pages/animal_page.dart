@@ -44,7 +44,7 @@ class _AnimalPageState extends State<AnimalPage> {
       builder: (_) => const AddAnimalPage(),
       backgroundColor: Colors.transparent,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.35,
+        maxHeight: MediaQuery.of(context).size.height,
       ),
     );
   }
@@ -72,31 +72,6 @@ class _AnimalPageState extends State<AnimalPage> {
         onRefresh: () => refresh(),
         child: Column(
           children: [
-            ValueListenableBuilder<bool>(
-              valueListenable: showFilter,
-              builder: (context, show, _) => !show
-                  ? const SizedBox.shrink()
-                  : Flexible(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Card(
-                          color: Colors.grey[200],
-                          child: ListTile(
-                            title: const Text('Mostrar Apenas não Finalizados'),
-                            trailing: ValueListenableBuilder(
-                              valueListenable: showAnimalsNotDone,
-                              builder: (context, _, __) => Switch(
-                                value: showAnimalsNotDone.value,
-                                onChanged: (val) =>
-                                    showAnimalsNotDone.value = val,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-            ),
             Flexible(
               flex: 8,
               child: ValueListenableBuilder<bool>(
@@ -118,6 +93,7 @@ class _AnimalPageState extends State<AnimalPage> {
                     }
                     return ListView.separated(
                       itemBuilder: (context, index) => ListTile(
+                        leading: Text(animals[index].id.toString()),
                         title: Text(animals[index].tag),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),

@@ -3,18 +3,24 @@ import 'package:flutter/material.dart';
 import '../entities/animal.dart';
 
 class AnimalFormWidget extends StatefulWidget {
-  AnimalFormWidget({
+  const AnimalFormWidget({
     key,
     required this.animal,
   }) : super(key: key);
-
-  final TextEditingController _tag = TextEditingController();
   final Animal animal;
   @override
   State<AnimalFormWidget> createState() => _AnimalFormWidgetState();
 }
 
 class _AnimalFormWidgetState extends State<AnimalFormWidget> {
+  final TextEditingController _tag = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tag.text = widget.animal.tag;
+  }
+
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,7 @@ class _AnimalFormWidgetState extends State<AnimalFormWidget> {
       key: formKey,
       child: TextFormField(
         maxLength: 15,
-        controller: widget._tag,
+        controller: _tag,
         style: const TextStyle(fontSize: 18),
         decoration: const InputDecoration(
           border: OutlineInputBorder(

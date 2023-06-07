@@ -33,7 +33,6 @@ class AnimalRepository extends ChangeNotifier {
   update(Animal animal) async {
     final box = await getBox();
     box.put(animal);
-    animals.add(animal);
     notifyListeners();
   }
 

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pontaagro/routes/routes.dart';
 import 'package:provider/provider.dart';
 
+import '../entities/animal.dart';
 import '../repositories/animal_repository.dart';
+import 'edit_animal_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -36,6 +38,19 @@ class _AnimalPageState extends State<AnimalPage> {
 
   getFilterAnimals() async {
     await context.read<AnimalRepository>().getAll();
+  }
+
+  openEditSheet(Animal animal) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (_) => EditAnimalPage(
+        animal: animal,
+      ),
+      backgroundColor: Colors.transparent,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.35,
+      ),
+    );
   }
 
   refresh() async {
@@ -84,9 +99,19 @@ class _AnimalPageState extends State<AnimalPage> {
                       itemBuilder: (context, index) => ListTile(
                         leading: Text(animals[index].id.toString()),
                         title: Text(animals[index].tag),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => repository.remove(animals[index]),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () => openEditSheet(animals[index]),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () =>
+                                  repository.remove(animals[index]),
+                            ),
+                          ],
                         ),
                       ),
                       separatorBuilder: (_, __) => const Divider(),

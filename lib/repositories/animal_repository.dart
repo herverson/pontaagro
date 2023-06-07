@@ -27,7 +27,7 @@ class AnimalRepository extends ChangeNotifier {
     final box = await getBox();
     box.put(animal);
     animals.add(animal);
-    notifyListeners();
+    onClose();
   }
 
   update(Animal animal) async {
@@ -51,6 +51,12 @@ class AnimalRepository extends ChangeNotifier {
   }
 
   onAdd() {
+    listForms.add(AnimalFormWidget(animal: Animal(tag: '')));
+    notifyListeners();
+  }
+
+  onClose() {
+    listForms.clear();
     listForms.add(AnimalFormWidget(animal: Animal(tag: '')));
     notifyListeners();
   }

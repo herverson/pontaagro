@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pontaagro/routes/routes.dart';
 import 'package:provider/provider.dart';
 
 import '../repositories/animal_repository.dart';
-import 'add_animal_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -38,17 +38,6 @@ class _AnimalPageState extends State<AnimalPage> {
     await context.read<AnimalRepository>().getAll();
   }
 
-  openAddSheet() async {
-    await showModalBottomSheet(
-      context: context,
-      builder: (_) => const AddAnimalPage(),
-      backgroundColor: Colors.transparent,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height,
-      ),
-    );
-  }
-
   refresh() async {
     await getFilterAnimals();
   }
@@ -64,7 +53,7 @@ class _AnimalPageState extends State<AnimalPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: openAddSheet,
+            onPressed: () => Routes.to.pushNamed('/animals/add'),
           ),
         ],
       ),

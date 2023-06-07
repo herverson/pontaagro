@@ -19,8 +19,9 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         context.read<AnimalRepository>().save(element.animal.tag);
       }
       Navigator.of(context).pop();
+    } else {
+      Navigator.of(context).pop();
     }
-    Navigator.of(context).pop();
   }
 
   @override
@@ -29,15 +30,17 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
       borderRadius: BorderRadius.circular(20.0),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.green,
           elevation: 0,
-          foregroundColor: Colors.black87,
           title: const Text('Novo Animal'),
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                context.read<AnimalRepository>().onClose();
+                Navigator.of(context).pop();
+              },
             )
           ],
         ),

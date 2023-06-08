@@ -9,6 +9,9 @@ final providers = <SingleChildWidget>[
   Provider<ObjectBoxDatabase>(
     create: (context) => ObjectBoxDatabase(),
   ),
+  Provider<ObjectBoxDatabase>(
+    create: (context) => ObjectBoxDatabase(),
+  ),
   ChangeNotifierProvider<AnimalRepository>(
     create: (context) => AnimalRepository(
       context.read(),

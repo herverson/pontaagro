@@ -3,40 +3,34 @@ import 'package:pontaagro/routes/routes.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/animal.dart';
+import '../entities/farm.dart';
 import '../repositories/animal_repository.dart';
 import 'edit_animal_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 
 class AnimalPage extends StatefulWidget {
-  const AnimalPage({Key? key}) : super(key: key);
+  const AnimalPage({Key? key, required this.farm}) : super(key: key);
 
+  final Farm farm;
   @override
   State<AnimalPage> createState() => _AnimalPageState();
 }
 
 class _AnimalPageState extends State<AnimalPage> {
   final loading = ValueNotifier(true);
-  final showAnimalsNotDone = ValueNotifier(false);
-  final showFilter = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
+    context.read<AnimalRepository>().farm = widget.farm;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getFilterAnimals();
+      getFilterAnimals(widget.farm);
       loading.value = false;
     });
-    showAnimalsNotDone.addListener(getFilterAnimals);
   }
 
-  @override
-  void dispose() {
-    showAnimalsNotDone.removeListener(getFilterAnimals);
-    super.dispose();
-  }
-
-  getFilterAnimals() async {
+  getFilterAnimals(Farm farm) async {
     await context.read<AnimalRepository>().getAll();
   }
 
@@ -53,8 +47,8 @@ class _AnimalPageState extends State<AnimalPage> {
     );
   }
 
-  refresh() async {
-    await getFilterAnimals();
+  refresh(Farm farm) async {
+    await getFilterAnimals(farm);
   }
 
   @override
@@ -62,18 +56,17 @@ class _AnimalPageState extends State<AnimalPage> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         elevation: 0,
-        title: const Text('Animal'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => Routes.to.pushNamed('/animals/add'),
-          ),
-        ],
+        title: Text(widget.farm.name),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Routes.to.pushNamed('/animals/add'),
+        icon: const Icon(Icons.add),
+        label: const Text('Adicionar Animais'),
       ),
       body: RefreshIndicator(
-        onRefresh: () => refresh(),
+        onRefresh: () => refresh(widget.farm),
         child: Column(
           children: [
             Flexible(
@@ -97,7 +90,6 @@ class _AnimalPageState extends State<AnimalPage> {
                     }
                     return ListView.separated(
                       itemBuilder: (context, index) => ListTile(
-                        leading: Text(animals[index].id.toString()),
                         title: Text(animals[index].tag),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,

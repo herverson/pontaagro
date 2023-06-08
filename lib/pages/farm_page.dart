@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pontaagro/pages/animal_page.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/farm.dart';
 import '../repositories/farm_repository.dart';
+import '../routes/routes.dart';
 import 'add_farm_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -87,7 +89,12 @@ class _FarmPageState extends State<FarmPage> {
                     }
                     return ListView.separated(
                       itemBuilder: (context, index) => ListTile(
-                        leading: Text(farms[index].id.toString()),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AnimalPage(farm: farms[index]),
+                          ),
+                        ),
                         title: Text(farms[index].name),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,

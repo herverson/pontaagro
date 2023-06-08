@@ -13,6 +13,7 @@ class AddAnimalPage extends StatefulWidget {
 class _AddAnimalPageState extends State<AddAnimalPage> {
   saveAnimal() async {
     final listForms = context.read<AnimalRepository>().listForms;
+    final farm = context.read<AnimalRepository>().farm;
     final isEmpty = listForms.any((element) => element.animal.tag.isEmpty);
     if (!isEmpty) {
       for (var element in listForms) {

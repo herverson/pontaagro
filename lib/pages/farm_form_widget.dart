@@ -27,6 +27,7 @@ class _FarmFormWidgetState extends State<FarmFormWidget> {
     return Form(
       key: formKey,
       child: TextFormField(
+        autofocus: true,
         controller: _name,
         style: const TextStyle(fontSize: 18),
         decoration: const InputDecoration(

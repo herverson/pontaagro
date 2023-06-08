@@ -33,14 +33,10 @@ class _FarmPageState extends State<FarmPage> {
   }
 
   openAddSheet(Farm farm) async {
-    await showModalBottomSheet(
+    await showDialog(
       context: context,
       builder: (_) => AddFarmPage(
         farm: farm,
-      ),
-      backgroundColor: Colors.transparent,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.40,
       ),
     );
   }
@@ -100,11 +96,17 @@ class _FarmPageState extends State<FarmPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit),
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Colors.blue,
+                              ),
                               onPressed: () => openAddSheet(farms[index]),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete),
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
                               onPressed: () => repository.remove(farms[index]),
                             ),
                           ],

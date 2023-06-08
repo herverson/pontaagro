@@ -95,11 +95,17 @@ class _AnimalPageState extends State<AnimalPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit),
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Colors.blue,
+                              ),
                               onPressed: () => openEditSheet(animals[index]),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete),
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
                               onPressed: () =>
                                   repository.remove(animals[index]),
                             ),

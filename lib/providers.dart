@@ -3,6 +3,7 @@ import 'package:provider/single_child_widget.dart';
 
 import 'database/objectbox_database.dart';
 import 'repositories/animal_repository.dart';
+import 'repositories/farm_repository.dart';
 
 final providers = <SingleChildWidget>[
   Provider<ObjectBoxDatabase>(
@@ -10,6 +11,11 @@ final providers = <SingleChildWidget>[
   ),
   ChangeNotifierProvider<AnimalRepository>(
     create: (context) => AnimalRepository(
+      context.read(),
+    ),
+  ),
+  ChangeNotifierProvider<FarmRepository>(
+    create: (context) => FarmRepository(
       context.read(),
     ),
   ),

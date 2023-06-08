@@ -1,50 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:pontaagro/routes/routes.dart';
 import 'package:provider/provider.dart';
 
-import '../entities/animal.dart';
-import '../repositories/animal_repository.dart';
-import 'edit_animal_page.dart';
+import '../entities/farm.dart';
+import '../repositories/farm_repository.dart';
+import 'add_farm_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 
-class AnimalPage extends StatefulWidget {
-  const AnimalPage({Key? key}) : super(key: key);
+class FarmPage extends StatefulWidget {
+  const FarmPage({Key? key}) : super(key: key);
 
   @override
-  State<AnimalPage> createState() => _AnimalPageState();
+  State<FarmPage> createState() => _FarmPageState();
 }
 
-class _AnimalPageState extends State<AnimalPage> {
+class _FarmPageState extends State<FarmPage> {
   final loading = ValueNotifier(true);
-  final showAnimalsNotDone = ValueNotifier(false);
-  final showFilter = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getFilterAnimals();
+      getFilterFarms();
       loading.value = false;
     });
-    showAnimalsNotDone.addListener(getFilterAnimals);
   }
 
-  @override
-  void dispose() {
-    showAnimalsNotDone.removeListener(getFilterAnimals);
-    super.dispose();
+  getFilterFarms() async {
+    await context.read<FarmRepository>().getAll();
   }
 
-  getFilterAnimals() async {
-    await context.read<AnimalRepository>().getAll();
-  }
-
-  openEditSheet(Animal animal) async {
+  openAddSheet(Farm farm) async {
     await showModalBottomSheet(
       context: context,
-      builder: (_) => EditAnimalPage(
-        animal: animal,
+      builder: (_) => AddFarmPage(
+        farm: farm,
       ),
       backgroundColor: Colors.transparent,
       constraints: BoxConstraints(
@@ -54,7 +44,7 @@ class _AnimalPageState extends State<AnimalPage> {
   }
 
   refresh() async {
-    await getFilterAnimals();
+    await getFilterFarms();
   }
 
   @override
@@ -64,13 +54,13 @@ class _AnimalPageState extends State<AnimalPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
-        title: const Text('Animal'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => Routes.to.pushNamed('/animals/add'),
-          ),
-        ],
+        title: const Text('Pontaagro'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => openAddSheet(Farm(name: '')),
+        icon: const Icon(Icons.add),
+        label: const Text('Adicionar Fazenda'),
       ),
       body: RefreshIndicator(
         onRefresh: () => refresh(),
@@ -80,9 +70,9 @@ class _AnimalPageState extends State<AnimalPage> {
               flex: 8,
               child: ValueListenableBuilder<bool>(
                 valueListenable: loading,
-                builder: (context, load, _) => Consumer<AnimalRepository>(
+                builder: (context, load, _) => Consumer<FarmRepository>(
                   builder: (context, repository, child) {
-                    final animals = repository.animals;
+                    final farms = repository.farms;
 
                     if (load) {
                       return const Center(
@@ -90,32 +80,31 @@ class _AnimalPageState extends State<AnimalPage> {
                       );
                     }
 
-                    if (animals.isEmpty) {
+                    if (farms.isEmpty) {
                       return const Center(
-                        child: Text('A lista de animais está vazia :('),
+                        child: Text('A lista de fazendas está vazia :('),
                       );
                     }
                     return ListView.separated(
                       itemBuilder: (context, index) => ListTile(
-                        leading: Text(animals[index].id.toString()),
-                        title: Text(animals[index].tag),
+                        leading: Text(farms[index].id.toString()),
+                        title: Text(farms[index].name),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit),
-                              onPressed: () => openEditSheet(animals[index]),
+                              onPressed: () => openAddSheet(farms[index]),
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete),
-                              onPressed: () =>
-                                  repository.remove(animals[index]),
+                              onPressed: () => repository.remove(farms[index]),
                             ),
                           ],
                         ),
                       ),
                       separatorBuilder: (_, __) => const Divider(),
-                      itemCount: repository.animals.length,
+                      itemCount: repository.farms.length,
                     );
                   },
                 ),

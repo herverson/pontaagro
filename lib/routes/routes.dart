@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pontaagro/pages/add_animal_page.dart';
 
-import '../pages/animal_page.dart';
+import '../pages/farm_page.dart';
 
 class Routes {
   static Map<String, Widget Function(BuildContext)> list =
       <String, WidgetBuilder>{
-    '/': (_) => const AnimalPage(),
+    '/': (_) => const FarmPage(),
     '/animals/add': (_) => const AddAnimalPage(),
   };
 

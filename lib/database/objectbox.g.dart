@@ -15,29 +15,58 @@ import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import '../entities/animal.dart';
+import '../entities/farm.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
 final _entities = <ModelEntity>[
   ModelEntity(
-      id: const IdUid(1, 268573863228218447),
+      id: const IdUid(1, 9110478115263231534),
       name: 'Animal',
-      lastPropertyId: const IdUid(4, 7339929511801456898),
+      lastPropertyId: const IdUid(3, 8736072484703411891),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
-            id: const IdUid(1, 8864021965361823050),
+            id: const IdUid(1, 5085241654110733763),
             name: 'id',
             type: 6,
             flags: 1),
         ModelProperty(
-            id: const IdUid(2, 3528183721046338),
+            id: const IdUid(2, 4051964776925454469),
             name: 'tag',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 8736072484703411891),
+            name: 'farmId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(1, 6870488856178607121),
+            relationTarget: 'Farm')
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(2, 7084027271250660897),
+      name: 'Farm',
+      lastPropertyId: const IdUid(2, 7395795394795753506),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 9075721314995162387),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 7395795394795753506),
+            name: 'name',
             type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[])
+      backlinks: <ModelBacklink>[
+        ModelBacklink(name: 'animals', srcEntity: 'Animal', srcField: '')
+      ])
 ];
 
 /// Open an ObjectBox store with the model declared in this file.
@@ -60,13 +89,13 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(1, 268573863228218447),
-      lastIndexId: const IdUid(0, 0),
+      lastEntityId: const IdUid(2, 7084027271250660897),
+      lastIndexId: const IdUid(1, 6870488856178607121),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [8718672334618269389, 7339929511801456898],
+      retiredPropertyUids: const [],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -75,7 +104,7 @@ ModelDefinition getObjectBoxModel() {
   final bindings = <Type, EntityDefinition>{
     Animal: EntityDefinition<Animal>(
         model: _entities[0],
-        toOneRelations: (Animal object) => [],
+        toOneRelations: (Animal object) => [object.farm],
         toManyRelations: (Animal object) => {},
         getId: (Animal object) => object.id,
         setId: (Animal object, int id) {
@@ -83,9 +112,10 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Animal object, fb.Builder fbb) {
           final tagOffset = fbb.writeString(object.tag);
-          fbb.startTable(5);
+          fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, tagOffset);
+          fbb.addInt64(2, object.farm.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -97,7 +127,44 @@ ModelDefinition getObjectBoxModel() {
               tag: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          object.farm.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          object.farm.attach(store);
+          return object;
+        }),
+    Farm: EntityDefinition<Farm>(
+        model: _entities[1],
+        toOneRelations: (Farm object) => [],
+        toManyRelations: (Farm object) => {
+              RelInfo<Animal>.toOneBacklink(
+                      3, object.id, (Animal srcObject) => srcObject.farm):
+                  object.animals
+            },
+        getId: (Farm object) => object.id,
+        setId: (Farm object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Farm object, fb.Builder fbb) {
+          final nameOffset = fbb.writeString(object.name);
+          fbb.startTable(3);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, nameOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
 
+          final object = Farm(
+              name: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          InternalToManyAccess.setRelInfo<Farm>(
+              object.animals,
+              store,
+              RelInfo<Animal>.toOneBacklink(
+                  3, object.id, (Animal srcObject) => srcObject.farm));
           return object;
         })
   };
@@ -112,4 +179,17 @@ class Animal_ {
 
   /// see [Animal.tag]
   static final tag = QueryStringProperty<Animal>(_entities[0].properties[1]);
+
+  /// see [Animal.farm]
+  static final farm =
+      QueryRelationToOne<Animal, Farm>(_entities[0].properties[2]);
+}
+
+/// [Farm] entity fields to define ObjectBox queries.
+class Farm_ {
+  /// see [Farm.id]
+  static final id = QueryIntegerProperty<Farm>(_entities[1].properties[0]);
+
+  /// see [Farm.name]
+  static final name = QueryStringProperty<Farm>(_entities[1].properties[1]);
 }

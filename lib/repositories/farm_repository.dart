@@ -8,6 +8,13 @@ class FarmRepository extends ChangeNotifier {
   List<Farm> _farms = [];
   late final ObjectBoxDatabase _database;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  int _length = 0;
+
+  int get length => _length;
+
   FarmRepository(this._database);
 
   List<Farm> get farms => _farms;
@@ -32,8 +39,11 @@ class FarmRepository extends ChangeNotifier {
   }
 
   getAll() async {
+    _isLoading = true;
+    notifyListeners();
     final box = await getBox();
     _farms = box.getAll() as List<Farm>;
+    _isLoading = false;
     notifyListeners();
   }
 

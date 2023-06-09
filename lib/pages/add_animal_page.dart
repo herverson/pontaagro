@@ -13,7 +13,6 @@ class AddAnimalPage extends StatefulWidget {
 class _AddAnimalPageState extends State<AddAnimalPage> {
   saveAnimal() async {
     final listForms = context.read<AnimalRepository>().listForms;
-    final farm = context.read<AnimalRepository>().farm;
     final isEmpty = listForms.any((element) => element.animal.tag.isEmpty);
     if (!isEmpty) {
       for (var element in listForms) {
@@ -32,16 +31,6 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         backgroundColor: Colors.green,
         elevation: 0,
         title: const Text('Novo Animal'),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              context.read<AnimalRepository>().onClose();
-              Navigator.of(context).pop();
-            },
-          )
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),

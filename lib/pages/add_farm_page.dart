@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pontaagro/pages/farm_form_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/farm.dart';
@@ -17,61 +16,69 @@ class AddFarmPage extends StatefulWidget {
 }
 
 class _AddFarmPageState extends State<AddFarmPage> {
-  saveFarm() async {
-    if (widget.farm.id == 0) {
-      context.read<FarmRepository>().save(widget.farm.name);
-    } else {
-      context.read<FarmRepository>().update(widget.farm);
-    }
-    Navigator.of(context).pop();
+  @override
+  void initState() {
+    super.initState();
+    _name.text = widget.farm.name;
   }
+
+  saveFarm() async {
+    if (formKey.currentState!.validate()) {
+      if (widget.farm.id == 0) {
+        context.read<FarmRepository>().save(widget.farm.name);
+      } else {
+        context.read<FarmRepository>().update(widget.farm);
+      }
+      Navigator.of(context).pop();
+    }
+  }
+
+  final TextEditingController _name = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final isNew = widget.farm.id == 0;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.0),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.green,
-          elevation: 0,
-          title: Text(isNew ? 'Criar Fazenda' : 'Editar Fazenda'),
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+
+    return AlertDialog(
+      title: Text(isNew ? 'Criar Fazenda' : 'Editar Fazenda'),
+      actions: [
+        ElevatedButton(
+          onPressed: saveFarm,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FarmFormWidget(farm: widget.farm),
+              const Icon(Icons.check),
               Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: ElevatedButton(
-                  onPressed: saveFarm,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.check),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Text(
-                          isNew ? 'Salvar Fazenda' : 'Editar Fazenda',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  isNew ? 'Salvar Fazenda' : 'Editar Fazenda',
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
             ],
           ),
+        ),
+      ],
+      content: Form(
+        key: formKey,
+        child: TextFormField(
+          autofocus: true,
+          controller: _name,
+          style: const TextStyle(fontSize: 18),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(32)),
+            ),
+            labelText: 'Nome',
+          ),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Informe o nome da fazenda';
+            }
+            return null;
+          },
+          onChanged: (value) => widget.farm.name = value,
         ),
       ),
     );

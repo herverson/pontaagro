@@ -35,14 +35,10 @@ class _AnimalPageState extends State<AnimalPage> {
   }
 
   openEditSheet(Animal animal) async {
-    await showModalBottomSheet(
+    await showDialog(
       context: context,
       builder: (_) => EditAnimalPage(
         animal: animal,
-      ),
-      backgroundColor: Colors.transparent,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.40,
       ),
     );
   }

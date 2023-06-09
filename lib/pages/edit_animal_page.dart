@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pontaagro/pages/animal_form_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/animal.dart';
@@ -17,56 +16,62 @@ class EditAnimalPage extends StatefulWidget {
 }
 
 class _EditAnimalPageState extends State<EditAnimalPage> {
+  final TextEditingController _tag = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    _tag.text = widget.animal.tag;
+  }
+
   saveAnimal() async {
-    context.read<AnimalRepository>().update(widget.animal);
-    Navigator.of(context).pop();
+    if (formKey.currentState!.validate()) {
+      context.read<AnimalRepository>().update(widget.animal);
+      Navigator.of(context).pop();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.0),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.green,
-          elevation: 0,
-          title: const Text('Editar Animal'),
-          automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              AnimalFormWidget(animal: widget.animal),
+    return AlertDialog(
+      title: const Text('Editar Animal'),
+      actions: [
+        ElevatedButton(
+          onPressed: saveAnimal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.check),
               Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: ElevatedButton(
-                  onPressed: saveAnimal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.check),
-                      Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Salvar Animal',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    ],
-                  ),
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  'Editar Animal',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ],
           ),
+        ),
+      ],
+      content: Form(
+        key: formKey,
+        child: TextFormField(
+          autofocus: true,
+          controller: _tag,
+          style: const TextStyle(fontSize: 18),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(32)),
+            ),
+            labelText: 'Tag',
+          ),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Informe a Tag do animal';
+            }
+            return null;
+          },
+          onChanged: (value) => widget.animal.tag = value,
         ),
       ),
     );

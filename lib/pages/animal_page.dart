@@ -61,62 +61,55 @@ class _AnimalPageState extends State<AnimalPage> {
         icon: const Icon(Icons.add),
         label: const Text('Adicionar Animais'),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => refresh(widget.farm),
-        child: Column(
-          children: [
-            Flexible(
-              flex: 8,
-              child: ValueListenableBuilder<bool>(
-                valueListenable: loading,
-                builder: (context, load, _) => Consumer<AnimalRepository>(
-                  builder: (context, repository, child) {
-                    final animals = repository.animals;
+      body: Column(
+        children: [
+          Flexible(
+            flex: 8,
+            child: Consumer<AnimalRepository>(
+              builder: (context, repository, child) {
+                final animals = repository.animals;
 
-                    if (load) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                if (repository.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                    if (animals.isEmpty) {
-                      return const Center(
-                        child: Text('A lista de animais está vazia :('),
-                      );
-                    }
-                    return ListView.separated(
-                      itemBuilder: (context, index) => ListTile(
-                        title: Text(animals[index].tag),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.blue,
-                              ),
-                              onPressed: () => openEditSheet(animals[index]),
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
-                              onPressed: () =>
-                                  repository.remove(animals[index]),
-                            ),
-                          ],
+                if (animals.isEmpty) {
+                  return const Center(
+                    child: Text('A lista de animais está vazia :('),
+                  );
+                }
+                return ListView.separated(
+                  itemBuilder: (context, index) => ListTile(
+                    title: Text(animals[index].tag),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.blue,
+                          ),
+                          onPressed: () => openEditSheet(animals[index]),
                         ),
-                      ),
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemCount: repository.animals.length,
-                    );
-                  },
-                ),
-              ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => repository.remove(animals[index]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemCount: repository.animals.length,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

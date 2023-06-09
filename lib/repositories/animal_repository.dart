@@ -22,6 +22,9 @@ class AnimalRepository extends ChangeNotifier {
 
   List<AnimalFormWidget> get listForms => _listForms;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   Future<Box> getBox() async {
     final store = await _database.getStore();
     return store.box<Animal>();
@@ -43,7 +46,10 @@ class AnimalRepository extends ChangeNotifier {
   }
 
   getAll() {
+    _isLoading = true;
+    notifyListeners();
     _animals = farm.animals;
+    _isLoading = false;
     notifyListeners();
   }
 

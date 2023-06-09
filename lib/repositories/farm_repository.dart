@@ -11,10 +11,6 @@ class FarmRepository extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  int _length = 0;
-
-  int get length => _length;
-
   FarmRepository(this._database);
 
   List<Farm> get farms => _farms;

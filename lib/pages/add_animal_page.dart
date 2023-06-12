@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../repositories/animal_repository.dart';
+import '../stores/animal_store.dart';
 
 class AddAnimalPage extends StatefulWidget {
   const AddAnimalPage({Key? key}) : super(key: key);
@@ -12,11 +12,13 @@ class AddAnimalPage extends StatefulWidget {
 
 class _AddAnimalPageState extends State<AddAnimalPage> {
   saveAnimal() async {
-    final listForms = context.read<AnimalRepository>().listForms;
+    final listForms = context.read<AnimalStore>().listForms;
     final isEmpty = listForms.any((element) => element.animal.tag.isEmpty);
     if (!isEmpty) {
       for (var element in listForms) {
-        context.read<AnimalRepository>().save(element.animal.tag);
+        context
+            .read<AnimalStore>()
+            .save(element.animal.tag, context.read<AnimalStore>().farm);
       }
       Navigator.of(context).pop();
     } else {
@@ -38,7 +40,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
           children: [
             Flexible(
               flex: 8,
-              child: Consumer<AnimalRepository>(
+              child: Consumer<AnimalStore>(
                 builder: (context, repository, child) {
                   final listForms = repository.listForms;
                   return ListView.separated(
@@ -54,7 +56,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
             Padding(
               padding: const EdgeInsets.only(top: 24.0),
               child: ElevatedButton(
-                onPressed: () => context.read<AnimalRepository>().onAdd(),
+                onPressed: () => context.read<AnimalStore>().onAdd(),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [

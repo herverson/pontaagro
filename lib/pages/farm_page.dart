@@ -3,7 +3,7 @@ import 'package:pontaagro/pages/animal_page.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/farm.dart';
-import '../repositories/farm_repository.dart';
+import '../stores/farm_store.dart';
 import 'add_farm_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -19,11 +19,13 @@ class _FarmPageState extends State<FarmPage> {
   @override
   void initState() {
     super.initState();
-    getFilterFarms();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getFilterFarms();
+    });
   }
 
   getFilterFarms() async {
-    await context.read<FarmRepository>().getAll();
+    await context.read<FarmStore>().getAll();
   }
 
   openAddSheet(Farm farm) async {
@@ -58,13 +60,15 @@ class _FarmPageState extends State<FarmPage> {
         children: [
           Flexible(
             flex: 8,
-            child: Consumer<FarmRepository>(
+            child: Consumer<FarmStore>(
               builder: (context, repository, child) {
                 final farms = repository.farms;
 
                 if (repository.isLoading) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      key: Key('progress-indicator'),
+                    ),
                   );
                 }
 

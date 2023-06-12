@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/farm.dart';
-import '../repositories/farm_repository.dart';
+import '../stores/farm_store.dart';
 
 class AddFarmPage extends StatefulWidget {
   const AddFarmPage({
@@ -25,9 +25,9 @@ class _AddFarmPageState extends State<AddFarmPage> {
   saveFarm() async {
     if (formKey.currentState!.validate()) {
       if (widget.farm.id == 0) {
-        context.read<FarmRepository>().save(widget.farm.name);
+        context.read<FarmStore>().save(widget.farm.name);
       } else {
-        context.read<FarmRepository>().update(widget.farm);
+        context.read<FarmStore>().update(widget.farm);
       }
       Navigator.of(context).pop();
     }

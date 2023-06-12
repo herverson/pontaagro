@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../database/objectbox.g.dart';
-import '../database/objectbox_database.dart';
 import '../entities/animal.dart';
 import '../entities/farm.dart';
 import '../pages/animal_form_widget.dart';
+import '../services/animal_service.dart';
 
-class AnimalRepository extends ChangeNotifier {
+class AnimalStore extends ChangeNotifier {
   List<Animal> _animals = [];
   final List<AnimalFormWidget> _listForms = [
     AnimalFormWidget(animal: Animal(tag: ''))
   ];
   Farm farm = Farm(name: '');
-  late final ObjectBoxDatabase _database;
+  late final AnimalService _animalService;
 
-  AnimalRepository(
-    this._database,
+  AnimalStore(
+    this._animalService,
   );
 
   List<Animal> get animals => _animals;
@@ -25,37 +24,27 @@ class AnimalRepository extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<Box> getBox() async {
-    final store = await _database.getStore();
-    return store.box<Animal>();
-  }
-
-  save(String tag) async {
-    final animal = Animal(tag: tag);
-    animal.farm.target = farm;
-    final box = await getBox();
-    box.put(animal);
+  Future<void> save(String tag, Farm farm) async {
+    final animal = await _animalService.save(tag, farm);
     animals.add(animal);
     onClose();
   }
 
-  update(Animal animal) async {
-    final box = await getBox();
-    box.put(animal);
+  Future<void> update(Animal animal) async {
+    await _animalService.update(animal);
     notifyListeners();
   }
 
-  getAll() {
+  Future<void> getAll() async {
     _isLoading = true;
     notifyListeners();
-    _animals = farm.animals;
+    _animals = await _animalService.getAll();
     _isLoading = false;
     notifyListeners();
   }
 
-  remove(Animal animal) async {
-    final box = await getBox();
-    box.remove(animal.id);
+  Future<void> remove(Animal animal) async {
+    _animalService.remove(animal);
     animals.remove(animal);
     notifyListeners();
   }

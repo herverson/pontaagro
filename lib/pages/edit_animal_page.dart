@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../entities/animal.dart';
-import '../repositories/animal_repository.dart';
+import '../stores/animal_store.dart';
 
 class EditAnimalPage extends StatefulWidget {
   const EditAnimalPage({
@@ -26,7 +26,7 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
 
   saveAnimal() async {
     if (formKey.currentState!.validate()) {
-      context.read<AnimalRepository>().update(widget.animal);
+      context.read<AnimalStore>().update(widget.animal);
       Navigator.of(context).pop();
     }
   }

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../entities/animal.dart';
 import '../entities/farm.dart';
-import '../repositories/animal_repository.dart';
+import '../stores/animal_store.dart';
 import 'edit_animal_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -23,7 +23,7 @@ class _AnimalPageState extends State<AnimalPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AnimalRepository>().farm = widget.farm;
+    context.read<AnimalStore>().farm = widget.farm;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getFilterAnimals(widget.farm);
       loading.value = false;
@@ -31,7 +31,7 @@ class _AnimalPageState extends State<AnimalPage> {
   }
 
   getFilterAnimals(Farm farm) async {
-    await context.read<AnimalRepository>().getAll();
+    await context.read<AnimalStore>().getAll();
   }
 
   openEditSheet(Animal animal) async {
@@ -53,7 +53,12 @@ class _AnimalPageState extends State<AnimalPage> {
       key: scaffoldKey,
       appBar: AppBar(
         elevation: 0,
-        title: Text(widget.farm.name),
+        title: Consumer<AnimalStore>(
+          builder: (context, repository, child) {
+            // final animals = repository.farm.animals;
+            return Text(repository.farm.name);
+          },
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton.extended(
@@ -65,13 +70,15 @@ class _AnimalPageState extends State<AnimalPage> {
         children: [
           Flexible(
             flex: 8,
-            child: Consumer<AnimalRepository>(
+            child: Consumer<AnimalStore>(
               builder: (context, repository, child) {
                 final animals = repository.animals;
 
                 if (repository.isLoading) {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      key: Key('progress-indicator'),
+                    ),
                   );
                 }
 

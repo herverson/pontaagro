@@ -26,7 +26,7 @@ void main() {
     },
   );
 
-  group('getFarms', () {
+  group('CRUDFarms', () {
     final farmsFromDataBase = [
       Farm(name: 'Test 1'),
       Farm(name: 'Test 2'),

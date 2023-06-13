@@ -6,7 +6,6 @@ import '../entities/farm.dart';
 class AnimalService {
   late final ObjectBoxDatabase _database;
   AnimalService(this._database);
-  Farm farm = Farm(name: '');
 
   Future<Box> getBox() async {
     final store = await _database.getStore();

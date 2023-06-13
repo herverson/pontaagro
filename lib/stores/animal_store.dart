@@ -38,7 +38,7 @@ class AnimalStore extends ChangeNotifier {
   Future<void> getAll() async {
     _isLoading = true;
     notifyListeners();
-    _animals = await _animalService.getAll();
+    _animals = farm.animals;
     _isLoading = false;
     notifyListeners();
   }

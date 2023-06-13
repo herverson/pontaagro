@@ -28,71 +28,50 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0,
         title: const Text('Novo Animal'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            Flexible(
-              flex: 8,
-              child: Consumer<AnimalStore>(
-                builder: (context, repository, child) {
-                  final listForms = repository.listForms;
-                  return ListView.separated(
-                    itemBuilder: (context, index) => ListTile(
-                      title: listForms[index],
-                    ),
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemCount: listForms.length,
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24.0),
-              child: ElevatedButton(
-                onPressed: () => context.read<AnimalStore>().onAdd(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.add),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        'Adicionar Animal',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: showFab
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                FloatingActionButton.extended(
+                  heroTag: 'addAnimal',
+                  onPressed: () => context.read<AnimalStore>().onAdd(),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Adicionar Animal'),
                 ),
+                const SizedBox(height: 10),
+                FloatingActionButton.extended(
+                  heroTag: 'saveAnimals',
+                  onPressed: saveAnimal,
+                  icon: const Icon(Icons.check),
+                  label: const Text('Salvar Animais'),
+                )
+              ],
+            )
+          : null,
+      body: Consumer<AnimalStore>(
+        builder: (context, repository, child) {
+          final listForms = repository.listForms;
+          return ListView.separated(
+            padding: const EdgeInsets.only(bottom: 100),
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: listForms[index],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24.0),
-              child: ElevatedButton(
-                onPressed: saveAnimal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.check),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        'Salvar Animais',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+            separatorBuilder: (_, __) => const Divider(),
+            itemCount: listForms.length,
+          );
+        },
       ),
     );
   }

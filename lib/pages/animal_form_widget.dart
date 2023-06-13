@@ -27,6 +27,7 @@ class _AnimalFormWidgetState extends State<AnimalFormWidget> {
     return Form(
       key: formKey,
       child: TextFormField(
+        autofocus: true,
         maxLength: 15,
         controller: _tag,
         style: const TextStyle(fontSize: 18),

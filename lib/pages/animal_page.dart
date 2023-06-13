@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../entities/animal.dart';
 import '../entities/farm.dart';
 import '../stores/animal_store.dart';
+import '../stores/farm_store.dart';
 import 'edit_animal_page.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -43,8 +44,9 @@ class _AnimalPageState extends State<AnimalPage> {
     );
   }
 
-  refresh(Farm farm) async {
-    await getFilterAnimals(farm);
+  refresh() async {
+    context.read<FarmStore>().getAll();
+    Navigator.of(context).pop();
   }
 
   @override
@@ -55,68 +57,69 @@ class _AnimalPageState extends State<AnimalPage> {
         elevation: 0,
         title: Consumer<AnimalStore>(
           builder: (context, repository, child) {
-            // final animals = repository.farm.animals;
             return Text(repository.farm.name);
           },
         ),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: refresh,
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Routes.to.pushNamed('/animals/add'),
         icon: const Icon(Icons.add),
         label: const Text('Adicionar Animais'),
       ),
-      body: Column(
-        children: [
-          Flexible(
-            flex: 8,
-            child: Consumer<AnimalStore>(
-              builder: (context, repository, child) {
-                final animals = repository.animals;
+      body: Consumer<AnimalStore>(
+        builder: (context, repository, child) {
+          final animals = repository.animals;
 
-                if (repository.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      key: Key('progress-indicator'),
-                    ),
-                  );
-                }
+          if (repository.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                key: Key('progress-indicator'),
+              ),
+            );
+          }
 
-                if (animals.isEmpty) {
-                  return const Center(
-                    child: Text('A lista de animais está vazia :('),
-                  );
-                }
-                return ListView.separated(
-                  itemBuilder: (context, index) => ListTile(
-                    title: Text(animals[index].tag),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () => openEditSheet(animals[index]),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          onPressed: () => repository.remove(animals[index]),
-                        ),
-                      ],
+          if (animals.isEmpty) {
+            return const Center(
+              child: Text('A lista de animais está vazia :('),
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.only(bottom: 80),
+            itemBuilder: (context, index) => ListTile(
+              title: Text(animals[index].tag),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.blue,
                     ),
+                    onPressed: () => openEditSheet(animals[index]),
                   ),
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemCount: repository.animals.length,
-                );
-              },
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () => repository.remove(animals[index]),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            separatorBuilder: (_, __) => const Divider(),
+            itemCount: repository.animals.length,
+          );
+        },
       ),
     );
   }

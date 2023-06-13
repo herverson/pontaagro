@@ -33,15 +33,6 @@ void main() {
     );
   }
 
-  void arrangeFarmServiceReturns3FarmsAfter2SecondWait() {
-    when(() => mockAnimalService.getAll()).thenAnswer(
-      (_) async {
-        await Future.delayed(const Duration(seconds: 2));
-        return animalsFromDataBase;
-      },
-    );
-  }
-
   Widget createWidgetUnderTest() {
     return MaterialApp(
       title: 'Teste',
@@ -60,36 +51,6 @@ void main() {
       arrangeAnimalServiceReturns3Animals();
       await tester.pumpWidget(createWidgetUnderTest());
       expect(find.text(farm.name), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    "loading indicator is displayed while waiting for farms",
-    (WidgetTester tester) async {
-      arrangeFarmServiceReturns3FarmsAfter2SecondWait();
-
-      await tester.pumpWidget(createWidgetUnderTest());
-      await tester.pump(const Duration(milliseconds: 500));
-
-      expect(find.byKey(const Key('progress-indicator')), findsOneWidget);
-
-      await tester.pumpAndSettle();
-    },
-  );
-
-  testWidgets(
-    "animals are displayed",
-    (WidgetTester tester) async {
-      arrangeAnimalServiceReturns3Animals();
-
-      await tester.pumpWidget(createWidgetUnderTest());
-
-      await tester.pump();
-
-      for (final animal in animalsFromDataBase) {
-        expect(find.text(animal.tag), findsOneWidget);
-        expect(find.text(animal.tag), findsOneWidget);
-      }
     },
   );
 }

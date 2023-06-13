@@ -22,6 +22,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
       }
       Navigator.of(context).pop();
     } else {
+      context.read<AnimalStore>().onClose();
       Navigator.of(context).pop();
     }
   }
@@ -42,6 +43,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 FloatingActionButton.extended(
+                  key: const Key('add-animal'),
                   heroTag: 'addAnimal',
                   onPressed: () => context.read<AnimalStore>().onAdd(),
                   icon: const Icon(Icons.add),
@@ -49,6 +51,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
                 ),
                 const SizedBox(height: 10),
                 FloatingActionButton.extended(
+                  key: const Key('save-animals'),
                   heroTag: 'saveAnimals',
                   onPressed: saveAnimal,
                   icon: const Icon(Icons.check),

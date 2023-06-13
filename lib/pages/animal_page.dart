@@ -46,6 +46,7 @@ class _AnimalPageState extends State<AnimalPage> {
 
   refresh() async {
     context.read<FarmStore>().getAll();
+    context.read<AnimalStore>().onClose();
     Navigator.of(context).pop();
   }
 

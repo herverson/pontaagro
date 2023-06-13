@@ -63,6 +63,7 @@ class _AddFarmPageState extends State<AddFarmPage> {
       content: Form(
         key: formKey,
         child: TextFormField(
+          key: const Key('text-name'),
           autofocus: true,
           controller: _name,
           style: const TextStyle(fontSize: 18),

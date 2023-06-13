@@ -61,7 +61,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         builder: (context, repository, child) {
           final listForms = repository.listForms;
           return ListView.separated(
-            padding: const EdgeInsets.only(bottom: 100),
+            padding: const EdgeInsets.only(bottom: 110),
             itemBuilder: (context, index) => Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(

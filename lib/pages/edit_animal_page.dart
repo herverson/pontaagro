@@ -56,6 +56,7 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
       content: Form(
         key: formKey,
         child: TextFormField(
+          maxLength: 15,
           key: const Key('text-tag'),
           autofocus: true,
           controller: _tag,

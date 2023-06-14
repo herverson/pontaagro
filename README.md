@@ -10,9 +10,9 @@
 
 
 <row>
-  <column><img align="left" width="300" height="600" src="https://github.com/herverson/pontaagro/blob/master/screenshots/01.png"></column>
+  <column><img align="left" width="300" height="600" src="https://github.com/herverson/pontaagro/blob/master/screenshots/1.png"></column>
   
-  <column><img align="left" width="300" height="600" src="https://github.com/herverson/pontaagro/blob/master/screenshots/02.png"></column>  
+  <column><img align="left" width="300" height="600" src="https://github.com/herverson/pontaagro/blob/master/screenshots/2.png"></column>  
   
-  <column><img align="left" width="300" height="600" src="https://github.com/herverson/pontaagro/blob/master/screenshots/03.png"></column>  
+  <column><img align="left" width="300" height="600" src="https://github.com/herverson/pontaagro/blob/master/screenshots/3.png"></column>  
 </row>
